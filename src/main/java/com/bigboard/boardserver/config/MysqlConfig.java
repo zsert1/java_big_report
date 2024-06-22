@@ -10,7 +10,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 @Configuration
-@MapperScan(basePackages = "com.bigboard.boardserver.mapper")
+@MapperScan(basePackages = "com.bigboard.boardserver")
 public class MysqlConfig {
 
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception{

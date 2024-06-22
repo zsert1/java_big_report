@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.bigboard.boardserver.dto.UserDTO;
+import com.bigboard.boardserver.dto.request.UserDeleteId;
 import com.bigboard.boardserver.dto.request.UserLoginRequest;
 import com.bigboard.boardserver.dto.request.UserUpdatePasswordRequest;
 import com.bigboard.boardserver.dto.response.LoginResponse;
@@ -18,6 +18,7 @@ import com.bigboard.boardserver.util.SessionUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.log4j.Log4j2;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,17 +31,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Log4j2
 public class UserController {
 
-
     private final UserServiceImpl userService;
     private static final ResponseEntity<LoginResponse> FAIL_RESPONSE = new ResponseEntity<LoginResponse>(HttpStatus.BAD_REQUEST);
     private static LoginResponse loginResponse;
-    
+
     @Autowired
-    public UserController(UserServiceImpl userService){
-        this.userService=userService;
+    public UserController(UserServiceImpl userService) {
+        this.userService = userService;
     }
 
-   @PostMapping("sign-up")
+
+    @PostMapping("sign-up")
     @ResponseStatus(HttpStatus.CREATED)
     public void signUp(@RequestBody UserDTO userDTO) {
         if (UserDTO.hasNullDataBeforeSignup(userDTO)) {
@@ -48,14 +49,16 @@ public class UserController {
         }
         userService.register(userDTO);
     }
+
     @PostMapping("sign-in")
-    public HttpStatus login(@RequestBody UserLoginRequest loginRequest,HttpSession session) {
+    public HttpStatus login(@RequestBody UserLoginRequest loginRequest,
+                            HttpSession session) {
         ResponseEntity<LoginResponse> responseEntity = null;
         String id = loginRequest.getUserId();
         String password = loginRequest.getPassword();
         UserDTO userInfo = userService.login(id, password);
-        
-        if(userInfo ==null){
+
+        if (userInfo == null) {
             return HttpStatus.NOT_FOUND;
         } else if (userInfo != null) {
             loginResponse = LoginResponse.success(userInfo);
@@ -68,6 +71,7 @@ public class UserController {
         } else {
             throw new RuntimeException("Login Error! 유저 정보가 없거나 지워진 유저 정보입니다.");
         }
+
         return HttpStatus.OK;
     }
 
@@ -84,7 +88,7 @@ public class UserController {
         SessionUtil.clear(session);
     }
 
-        @PatchMapping("password")
+    @PatchMapping("password")
     public ResponseEntity<LoginResponse> updateUserPassword(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest,
                                                             HttpSession session) {
         ResponseEntity<LoginResponse> responseEntity = null;
@@ -101,6 +105,20 @@ public class UserController {
         }
         return responseEntity;
     }
-    
 
+    @DeleteMapping
+    public ResponseEntity<LoginResponse> deleteId(@RequestBody UserDeleteId userDeleteId,
+                                                  HttpSession session) {
+        ResponseEntity<LoginResponse> responseEntity = null;
+        String Id = SessionUtil.getLoginMemberId(session);
+
+        try {
+            userService.deleteId(Id, userDeleteId.getPassword());
+            responseEntity = new ResponseEntity<LoginResponse>(loginResponse, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            log.info("deleteID 실패");
+            responseEntity = FAIL_RESPONSE;
+        }
+        return responseEntity;
+    }
 }
