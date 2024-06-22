@@ -24,6 +24,10 @@ public class UserDTO {
     private boolean isWithDraw;
     private Status status;
     private Date updateTime;
+    public static boolean hasNullDataBeforeSignup(UserDTO userDTO) {
+        return userDTO.getUserId() == null || userDTO.getPassword() == null
+                || userDTO.getNickName() == null;
+    }
 
 
 }
