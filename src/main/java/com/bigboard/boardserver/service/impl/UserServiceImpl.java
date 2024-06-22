@@ -9,6 +9,8 @@ import com.bigboard.boardserver.dto.UserDTO;
 import com.bigboard.boardserver.exception.DuplicatedException;
 import com.bigboard.boardserver.mapper.UserProfileMapper;
 import com.bigboard.boardserver.service.UserService;
+import com.bigboard.boardserver.util.SHA256Util;
+
 import static com.bigboard.boardserver.util.SHA256Util.encryptSHA256;
 import lombok.extern.log4j.Log4j2;
 
@@ -44,14 +46,14 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDTO login(String id, String password) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'login'");
+        String cryptoPassword=encryptSHA256(password);
+        UserDTO memDto=userProfileMapper.findByIdAndPassword(id, cryptoPassword);
+        return memDto;
     }
 
     @Override
     public boolean isDuplicated(String id) {
         return userProfileMapper.idCheck(id)==1;
-        // TODO Auto-generated method stub
     }
 
     @Override
@@ -62,14 +64,28 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void updatePassword(String id, String beforePassword, String afterPassword) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updatePassword'");
+        String cryptoPassword=encryptSHA256(beforePassword);
+        UserDTO memberInfo=userProfileMapper.findByIdAndPassword(id, cryptoPassword);
+        if(memberInfo != null){
+            memberInfo.setPassword(encryptSHA256(afterPassword));
+            userProfileMapper.updatePassword(memberInfo);
+        } else {
+            log.error("updatePasswrod ERROR! {}", memberInfo);
+            throw new IllegalArgumentException("updatePasswrod ERROR! 비밀번호 변경 메서드를 확인해주세요\n" + "Params : " + memberInfo);
+        }
     }
 
     @Override
     public void deleteId(String id, String password) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteId'");
+        String cryptoPassword = SHA256Util.encryptSHA256(password);
+        UserDTO memberInfo = userProfileMapper.findByIdAndPassword(id, cryptoPassword);
+
+        if (memberInfo != null) {
+            userProfileMapper.deleteUserProfile(memberInfo.getUserId());
+        } else {
+            log.error("deleteId ERROR! {}", memberInfo);
+            throw new RuntimeException("deleteId ERROR! id 삭제 메서드를 확인해주세요\n" + "Params : " + memberInfo);
+        }
     }
 
 }
