@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bigboard.boardserver.aop.LoginCheck;
 import com.bigboard.boardserver.dto.UserDTO;
 import com.bigboard.boardserver.dto.request.UserLoginRequest;
 import com.bigboard.boardserver.dto.request.UserUpdatePasswordRequest;
@@ -84,7 +85,8 @@ public class UserController {
         SessionUtil.clear(session);
     }
 
-        @PatchMapping("password")
+    @PatchMapping("password")
+    @LoginCheck(type = LoginCheck.UserType.USER)
     public ResponseEntity<LoginResponse> updateUserPassword(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest,
                                                             HttpSession session) {
         ResponseEntity<LoginResponse> responseEntity = null;
