@@ -6,6 +6,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import com.bigboard.boardserver.util.SessionUtil;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -15,6 +17,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Component
 @Aspect
+@Order(Ordered.LOWEST_PRECEDENCE)
 @Log4j2
 public class LoginCheckAspect {
     @Around("@annotation(com.bigboard.boardserver.aop.LoginCheck) && @ annotation(loginCheck)")
