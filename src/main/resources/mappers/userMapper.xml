@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.bigboard.boardserver.mapper.UserProfileMapper">
 
     <select id="getUserProfile" resultType="com.bigboard.boardserver.dto.UserDTO">
-        SELECT userId, userId, password, nickName, createTime, isWithDraw, status
+        SELECT userId, passWord AS password, nickName, createTime, isWithDraw, status
         FROM user
         WHERE userId = #{id}
     </select>
@@ -16,16 +16,15 @@
 
     <update id="updateUserProfile" parameterType="com.bigboard.boardserver.dto.UserDTO">
         UPDATE user
-        SET password=#{password},
+        SET passWord=#{password},
             nickName=#{nickName},
             isWithDraw=#{isWithDraw},
             status=#{status}
-        WHERE id = #{id}
+        WHERE userId = #{userId}
     </update>
 
     <delete id="deleteUserProfile">
-        DELETE
-        FROM user
+        DELETE FROM user
         WHERE userId = #{id}
     </delete>
 
@@ -35,13 +34,7 @@
     </insert>
 
     <select id="findByIdAndPassword" resultType="com.bigboard.boardserver.dto.UserDTO">
-        SELECT id,
-               userId,
-               passWord,
-               nickName,
-               createTime,
-               isWithDraw,
-               status
+        SELECT userId, passWord AS password, nickName, createTime, isWithDraw, status
         FROM user
         WHERE userId = #{id}
           AND passWord = #{password}
@@ -49,9 +42,9 @@
     </select>
 
     <select id="idCheck" resultType="int">
-        SELECT COUNT(id)
+        SELECT COUNT(*)
         FROM user
-        WHERE userId = #{userId}
+        WHERE userId = #{id}
     </select>
 
     <update id="updatePassword" parameterType="com.bigboard.boardserver.dto.UserDTO">

@@ -1,5 +1,6 @@
 package com.bigboard.boardserver.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,6 +22,7 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 @RequestMapping("/categories")
 @Log4j2
+@RequiredArgsConstructor
 public class CategoryController {
 
     private CategoryServiceImpl categoryService;
