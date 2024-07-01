@@ -55,10 +55,10 @@ public class PostController {
         CommonResponse commonResponse = new CommonResponse<>(HttpStatus.OK, "SUCCESS", "myPostInfo", postDTOList);
         return ResponseEntity.ok(commonResponse);
     }
-
+// 응답값 추상화하여 일관되게 제공하기 위해 PostResponse 지정
     @PatchMapping("{postId}")
     @LoginCheck(type = LoginCheck.UserType.USER)
-    public ResponseEntity<CommonResponse<PostRequest>> updatePosts(String accountId,
+    public ResponseEntity<CommonResponse<PostResponse>> updatePosts(String accountId,
                                @PathVariable(name = "postId") int postId,
                                @RequestBody PostRequest postRequest) {
         UserDTO memberInfo = userService.getUserInfo(accountId);

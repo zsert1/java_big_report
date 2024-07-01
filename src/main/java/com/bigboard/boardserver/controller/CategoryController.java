@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bigboard.boardserver.aop.LoginCheck;
 import com.bigboard.boardserver.dto.CategoryDTO;
+import com.bigboard.boardserver.dto.PostDTO;
 import com.bigboard.boardserver.service.impl.CategoryServiceImpl;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -47,6 +49,9 @@ public class CategoryController {
         CategoryDTO categoryDTO = new CategoryDTO(categoryId, categoryRequest.getName(), CategoryDTO.SortStatus.NEWEST,10,1);
         categoryService.update(categoryDTO);
     }
+
+
+ 
 
 
     @DeleteMapping("{categoryId}")
